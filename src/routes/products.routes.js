@@ -11,8 +11,8 @@ const {ObjectID} = require("mongodb");
 router.get('/', async (req, res) => {
         const db = await connect();
         const result = await db.collection("productos").find({}).toArray();
-        console.log(result);
-        res.send('hola xD');
+        // console.log(result);
+        res.json(result);
     }
 );
 
@@ -32,11 +32,31 @@ router.post('/', async (req, res) => {
         // console.log(req.body);
         const producto =
             {
-                proveedor: req.body.proveedor
+                nombre: req.body.nombre,
+                proveedor: req.body.proveedor,
+                categoria: req.body.categoria,
+                descripcion: req.body.descripcion,
+                precio: req.body.precio,
+                inventario: req.body.inventario
             };
         const result = await db.collection("productos").insertOne(producto);
         console.log(result.ops[0]);
         res.send('Producto agregado exitosamente');
+    }
+);
+
+router.put('/:idProducto', async (req, res) =>
+    {
+        const {idProducto} = req.params;
+        const updateTask =
+                {
+                    precio:-1
+                };
+        const db = await connect();
+        const result = await db.collection("productos").updateOne({_id: ObjectID(idProducto)}, {$inc: updateTask});
+
+        // console.log(result.ops[0]);
+        res.send('Compra exitosa');
     }
 );
 
