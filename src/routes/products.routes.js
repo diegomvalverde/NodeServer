@@ -1,8 +1,21 @@
 import {Router} from 'express';
 const router = Router();
+const redis = require('redis');
+const REDIS_PORT = process.env.REDIS_PORT;
+
+let redisClient = redis.createClient(REDIS_PORT);
+
+
+redisClient.on('connect', function()
+{
+    console.log(">> Se ha conectado a Redis <<")
+}
+);
+
 
 //Database connection
 import {connect} from "../database";
+
 // import {ObjectID} from "mongodb";
 
 const {ObjectID} = require("mongodb");
@@ -30,30 +43,32 @@ router.get('/:id', async (req, res) => {
 router.post('/', async (req, res) => {
         const db = await connect();
         // console.log(req.body);
+        const proveedor = req.body.proveedor;
         const producto =
             {
                 nombre: req.body.nombre,
-                proveedor: req.body.proveedor,
                 categoria: req.body.categoria,
                 descripcion: req.body.descripcion,
                 precio: req.body.precio,
                 inventario: req.body.inventario
             };
-        const result = await db.collection("productos").insertOne(producto);
+        const result = await db.collection("productos").update({ proveedor: proveedor},
+            {
+                $push: {
+                    productos: producto
+                }
+            }, { upsert: true }
+            );
         console.log(result.ops[0]);
         res.send('Producto agregado exitosamente');
     }
 );
 
-router.put('/:idProducto', async (req, res) =>
+router.put('/:idProveedor/:idProducto', async (req, res) =>
     {
-        const {idProducto} = req.params;
-        const updateTask =
-                {
-                    precio:-1
-                };
+        const {idProveedor, idProducto} = req.params;
         const db = await connect();
-        const result = await db.collection("productos").updateOne({_id: ObjectID(idProducto)}, {$inc: updateTask});
+        const result = await db.collection("productos").updateOne({_id: ObjectID(idProveedor), "productos.nombre" : idProducto}, {$inc: {"productos.$.inventario": -1}});
 
         // console.log(result.ops[0]);
         res.send('Compra exitosa');

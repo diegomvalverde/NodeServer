@@ -8,7 +8,7 @@ export async function connect()
         {
             useNewUrlParser: true
         });
-        console.log('Se ha conectado a la base');
+        // console.log('Se ha conectado a la base');
         return client.db("amarson");
     }
     catch(e)

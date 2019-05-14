@@ -14,5 +14,5 @@ import ProductsRoutes from './routes/products.routes';
 app.use(express.json());
 
 app.use(IndexRoutes);
-app.use('/products', ProductsRoutes);
+app.use('/productos', ProductsRoutes);
 export default app;

@@ -1,0 +1,8 @@
+Principios de REST:
+
+1. Conexión cliente - servidor *
+2. No estado: Cada petición debe ser dependiente, no se identifican conexiones
+3. Caché: Responder algunas respuestas desde caché
+4. Capas: Servicor en capa *
+5. Interfaz uniforme: usar interfaz estandar
+6. Código ondemand: es opcional
