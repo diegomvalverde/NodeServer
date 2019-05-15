@@ -23,8 +23,10 @@ const {ObjectID} = require("mongodb");
 // Consulta toda la colección de la base
 router.get('/', async (req, res) => {
         const db = await connect();
+        const proveedores = db.collection("proveedores").distinct("proveedor");
         const result = await db.collection("productos").find({}).toArray();
-        // console.log(result);
+        console.log(proveedores);
+        // console.log(proveedores);
         res.json(result);
     }
 );
@@ -52,7 +54,7 @@ router.post('/', async (req, res) => {
                 precio: req.body.precio,
                 inventario: req.body.inventario
             };
-        const result = await db.collection("productos").update({ proveedor: proveedor},
+        const result = await db.collection("productos").update({ "proveedor": proveedor},
             {
                 $push: {
                     productos: producto
