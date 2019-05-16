@@ -1,9 +1,0 @@
-version: '3.7'
-
-services:
-  app:
-    build: .
-    volumes:
-      - "./api:/src/"
-    ports:
-      - "3000:3000"
