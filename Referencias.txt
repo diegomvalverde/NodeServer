@@ -1,0 +1,5 @@
+En este documento se agregan los enlaces de donde se obtuvo información o guía para la creación
+del proyecto:
+
+Api redis: https://www.youtube.com/watch?v=OtYoK0RV7oY
+Redis: https://github.com/NodeRedis/node_redis
