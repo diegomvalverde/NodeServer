@@ -8,6 +8,8 @@ const REDIS_PORT = process.env.REDIS_PORT;
 
 const redisClient = redis.createClient(REDIS_PORT);
 const getAsync = promisify(redisClient.get).bind(redisClient);
+const exists = promisify(redisClient.exists).bind(redisClient);
+
 redisClient.on('connect', function()
 {
     console.log(">> Se ha conectado a Redis <<")
@@ -68,16 +70,19 @@ router.get('/', async (req, res) => {
 // Consulta la colección de la base por proveedor
 router.get('/:nombreProveedor', async (req, res) => {
     const {nombreProveedor} = req.params;
-    if (await redisClient.exists(nombreProveedor))
+    if (await exists(nombreProveedor))
     {
         const resultado = JSON.parse(await getAsync(nombreProveedor));
+        console.log("Se cargó de redis...");
         res.json(resultado);
     }
     else {
         const db = await connect();
         const result = await db.collection("productos").find({proveedor: nombreProveedor}).toArray();
-        // console.log(result);
-        res.json(result);
+        const jsonResult = {proveedor:result[0].proveedor, online:1, productos:result[0].productos};
+        redisClient.set(jsonResult.proveedor, JSON.stringify(jsonResult));
+        // console.log(jsonResult);
+        res.json(jsonResult);
     }
 }
 );
